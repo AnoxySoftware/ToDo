@@ -304,5 +304,9 @@ class MockTodoItemViewModel: TodoItemViewModel {
         _ = self.updateDoneStateForIndexPath(IndexPath(row: 0, section: 0))
         _ = self.updateDoneStateForIndexPath(IndexPath(row: 0, section: 0))
     }
+    
+    func incrementID() -> Int {
+        return (uiRealm.objects(TodoItem.self).max(ofProperty: "id") as Int? ?? 0) + 1
+    }
 }
 

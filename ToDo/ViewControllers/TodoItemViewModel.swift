@@ -174,7 +174,7 @@ class TodoItemViewModel {
         }
     }
     
-    func incrementID() -> Int {
+    fileprivate func incrementID() -> Int {
         return (uiRealm.objects(TodoItem.self).max(ofProperty: "id") as Int? ?? 0) + 1
     }
 }
