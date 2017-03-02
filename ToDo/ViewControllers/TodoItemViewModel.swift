@@ -17,7 +17,9 @@ class TodoItemViewModel {
     }
     
     var todoList : List<TodoItem>!
-    let uiRealm = try! Realm()
+    
+    fileprivate let uiRealm = try! Realm()
+    
     var openTasks : Results<TodoItem>!
     var completedTasks : Results<TodoItem>!
     var sortOrder : sortCriteria = .sortByDate
@@ -25,9 +27,13 @@ class TodoItemViewModel {
     let sectionTitles : [String] = ["Open Tasks","Completed Tasks"]
     
     init(_ list:TodoList) {
-        self.todoList = list.todosList        
-        self.completedTasks = list.todosList.filter("isCompleted = true").sorted(byKeyPath: "createdAt", ascending:false)
-        self.openTasks = list.todosList.filter("isCompleted = false").sorted(byKeyPath: "createdAt", ascending:false)
+        self.todoList = list.todoItems
+        
+        self.completedTasks = list.todoItems.filter("isCompleted = true")
+            .sorted(byKeyPath: "createdAt", ascending:false)
+        
+        self.openTasks = list.todoItems.filter("isCompleted = false")
+            .sorted(byKeyPath: "createdAt", ascending:false)
     }
     
     func addTodoWithName(_ name:String, priority:Int, dueDate:Date) -> Bool {
@@ -83,7 +89,7 @@ class TodoItemViewModel {
         return sectionTitles[section]
     }
     
-    func changeSortCriteria(_ sortCriteria:sortCriteria) -> Bool {
+    func changeSortCriteria(_ sortCriteria:sortCriteria) {
         self.sortOrder = sortCriteria
         
         switch sortCriteria {
@@ -94,8 +100,6 @@ class TodoItemViewModel {
             self.completedTasks = self.completedTasks.sorted(byKeyPath: "priority", ascending:false)
             self.openTasks = self.openTasks.sorted(byKeyPath: "priority", ascending:false)
         }
-        
-        return true
     }
     
     func getCountForSection(_ section:Int) -> Int {
@@ -109,7 +113,7 @@ class TodoItemViewModel {
         }
     }
         
-    func deleteListAtIndexPath(_ indexPath: IndexPath) -> Bool {
+    func deleteTodoAtIndexPath(_ indexPath: IndexPath) -> Bool {
         let todoItem = self.getTodoAtIndexPath(indexPath)
         self.uiRealm.beginWrite()
         self.uiRealm.delete(todoItem)
@@ -154,11 +158,14 @@ class TodoItemViewModel {
     func filterByName(_ name:String) {
         let sortKeypath = self.sortOrder == .sortByDate ? "createdAt" : "priority"
         
-        self.completedTasks = self.todoList.filter(NSPredicate(format: "isCompleted = true AND name BEGINSWITH[c] '\(name)'")).sorted(byKeyPath: sortKeypath, ascending:false)
-        self.openTasks = self.todoList.filter(NSPredicate(format: "isCompleted = false AND name BEGINSWITH[c] '\(name)'")).sorted(byKeyPath: sortKeypath, ascending:false)
+        self.completedTasks = self.todoList.filter(NSPredicate(format: "isCompleted = true AND name BEGINSWITH[c] '\(name)'"))
+            .sorted(byKeyPath: sortKeypath, ascending:false)
+        
+        self.openTasks = self.todoList.filter(NSPredicate(format: "isCompleted = false AND name BEGINSWITH[c] '\(name)'"))
+            .sorted(byKeyPath: sortKeypath, ascending:false)
     }
     
-    private func getTodoAtIndexPath(_ indexPath:IndexPath) -> TodoItem {
+    func getTodoAtIndexPath(_ indexPath:IndexPath) -> TodoItem {
         if indexPath.section == 0 {
             return self.openTasks[indexPath.row]
         }
@@ -167,7 +174,7 @@ class TodoItemViewModel {
         }
     }
     
-    fileprivate func incrementID() -> Int {
+    func incrementID() -> Int {
         return (uiRealm.objects(TodoItem.self).max(ofProperty: "id") as Int? ?? 0) + 1
     }
 }

@@ -62,7 +62,7 @@ class TodoListViewController:UIViewController {
                 //we are adding a new task
                 let existingListcount = self.viewModel.lists.count
                 
-                if self.viewModel.addTodoListWithName(listName!) {
+                if self.viewModel.addTodoListWithName(listName!) >= 0 {
                     self.tableView.beginUpdates()
                     self.tableView.insertRows(at: [IndexPath(row: existingListcount, section: 0)], with: .automatic)
                     self.tableView.endUpdates()

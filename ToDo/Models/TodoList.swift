@@ -14,7 +14,7 @@ class TodoList: Object {
     dynamic var id = 0
     dynamic var name = ""
     dynamic var createdAt = Date()
-    let todosList = List<TodoItem>()
+    let todoItems = List<TodoItem>()
     
     override class func primaryKey() -> String? {
         return "id"

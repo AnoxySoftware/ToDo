@@ -30,9 +30,8 @@ class TodoItemViewController:UIViewController {
             return
         }
         
-        if self.viewModel.changeSortCriteria(TodoItemViewModel.sortCriteria(rawValue: segControl.selectedSegmentIndex)!) {
-            self.tableView.reloadData()
-        }
+        self.viewModel.changeSortCriteria(TodoItemViewModel.sortCriteria(rawValue: segControl.selectedSegmentIndex)!)
+        self.tableView.reloadData()
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -77,7 +76,7 @@ extension TodoItemViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]?  {
         
         let deleteAction = UITableViewRowAction(style: .destructive, title: "Delete") { (deleteAction, indexPath) -> Void in
-            if self.viewModel.deleteListAtIndexPath(indexPath) {
+            if self.viewModel.deleteTodoAtIndexPath(indexPath) {
                 tableView.deleteRows(at: [indexPath], with: .automatic)
             }
         }

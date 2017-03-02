@@ -18,7 +18,7 @@ class TodoListViewModel {
         self.lists = uiRealm.objects(TodoList.self)
     }
         
-    func addTodoListWithName(_ listName:String) -> Bool {
+    func addTodoListWithName(_ listName:String) -> Int {
         
         let newTodoList = TodoList()
         newTodoList.name = listName
@@ -31,9 +31,10 @@ class TodoListViewModel {
         }
         catch let error {
             print("Error during addTodoList: \(error)")
-            return false
+            return -1
         }
-        return true
+        
+        return newTodoList.id
     }
     
     func updateListAtIndexPath(_ indexPath: IndexPath, newName:String) -> Bool {
@@ -75,7 +76,7 @@ class TodoListViewModel {
     
     func getListNameAndTodoCountAtIndexPath(_ indexPath: IndexPath) -> (String,Int) {
         let listAtIndexPath: TodoList = self.lists[indexPath.row]
-        return (listAtIndexPath.name, listAtIndexPath.todosList.count)
+        return (listAtIndexPath.name, listAtIndexPath.todoItems.count)
     }
     
     func getViewModelAtIndexPath(_ indexPath: IndexPath) -> TodoItemViewModel {
@@ -89,7 +90,7 @@ class TodoListViewModel {
         return listAtIndexPath
     }
     
-    fileprivate func incrementID() -> Int {
+    private func incrementID() -> Int {
         return (uiRealm.objects(TodoList.self).max(ofProperty: "id") as Int? ?? 0) + 1
     }
 }
